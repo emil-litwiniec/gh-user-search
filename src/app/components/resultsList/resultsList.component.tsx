@@ -4,10 +4,18 @@ import {
   CircularProgress,
   List,
   ListItem,
+  styled,
   Typography,
 } from "@mui/material";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import React, { ReactNode, useEffect, useRef } from "react";
+
+const CardWrapper = styled(Card)`
+  min-height: 72px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 type ResultsListProps<T> = {
   items: T[];
@@ -15,6 +23,7 @@ type ResultsListProps<T> = {
   fetchNextPage: () => void;
   hasNextPage: boolean;
   isLoading: boolean;
+  hasError?: boolean;
   itemHeight?: number;
   totalCount?: number;
 };
@@ -27,6 +36,7 @@ export const ResultsList = <T,>({
   hasNextPage,
   isLoading = false,
   totalCount,
+  hasError,
 }: ResultsListProps<T>) => {
   const parentRef = useRef<HTMLDivElement | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
@@ -56,15 +66,7 @@ export const ResultsList = <T,>({
 
   if (items.length == 0) {
     return (
-      <Card
-        variant="outlined"
-        sx={{
-          minHeight: 72,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
+      <CardWrapper variant="outlined">
         {isLoading ? (
           <Box
             sx={{
@@ -78,20 +80,29 @@ export const ResultsList = <T,>({
         ) : (
           <Typography>No results</Typography>
         )}
-      </Card>
+      </CardWrapper>
+    );
+  }
+
+  if (hasError) {
+    return (
+      <CardWrapper variant="outlined">
+        <Typography>Couldn&apos;t fetch the results</Typography>
+      </CardWrapper>
     );
   }
 
   return (
     <Box>
-      <Card variant="outlined">
+      <CardWrapper variant="outlined">
         <Box
           ref={parentRef}
           sx={{
             height: 500,
+            width: "100%",
             overflow: "auto",
             scrollbarWidth: "none",
-            "&::-webkit-scrollbar": { display: "none" },
+            "&::-webkit-struecrollbar": { display: "none" },
           }}
         >
           <List
@@ -142,7 +153,7 @@ export const ResultsList = <T,>({
             </Box>
           )}
         </Box>
-      </Card>
+      </CardWrapper>
       {totalCount && items.length && (
         <Typography
           component="span"

@@ -20,27 +20,28 @@ const validationSchema = yup
 export const UserSearch = () => {
   const [username, setUsername] = useState("");
 
-  const { data, fetchNextPage, hasNextPage, isLoading } = useInfiniteQuery({
-    initialPageParam: 1,
-    queryKey: ["users", username],
-    queryFn: async ({ pageParam = 1 }) => {
-      const users = await getUsers({
-        username,
-        page: pageParam,
-      });
+  const { data, fetchNextPage, hasNextPage, isLoading, error } =
+    useInfiniteQuery({
+      initialPageParam: 1,
+      queryKey: ["users", username],
+      queryFn: async ({ pageParam = 1 }) => {
+        const users = await getUsers({
+          username,
+          page: pageParam,
+        });
 
-      return {
-        items: users.items,
-        totalCount: users.total_count,
-        nextPage:
-          users.items.length === DEFAULT_ITEMS_PER_PAGE
-            ? pageParam + 1
-            : undefined,
-      };
-    },
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-    enabled: !!username,
-  });
+        return {
+          items: users.items,
+          totalCount: users.total_count,
+          nextPage:
+            users.items.length === DEFAULT_ITEMS_PER_PAGE
+              ? pageParam + 1
+              : undefined,
+        };
+      },
+      getNextPageParam: (lastPage) => lastPage.nextPage,
+      enabled: !!username,
+    });
 
   const items = data?.pages.flatMap((page) => page.items) ?? [];
   const totalCount = data?.pages[0].totalCount;
@@ -60,8 +61,9 @@ export const UserSearch = () => {
           itemHeight={68}
           fetchNextPage={fetchNextPage}
           hasNextPage={hasNextPage}
-          isLoading={isLoading}
           totalCount={totalCount}
+          isLoading={isLoading}
+          hasError={!!error}
         />
       )}
     </Box>
