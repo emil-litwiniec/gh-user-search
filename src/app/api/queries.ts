@@ -1,3 +1,5 @@
+import { pipe } from "ramda";
+
 import { GitHubAPIError } from "./errors";
 import { GitHubResponse, UserSearchQueryParams } from "./types";
 
@@ -30,6 +32,7 @@ const createSearchQuery = ({
   return `?${params}`;
 };
 
+// Functional Programming - currying
 const fetchFromGitHub =
   (endpoint: string) =>
   async (query: string): Promise<GitHubResponse> => {
@@ -58,8 +61,8 @@ const fetchFromGitHub =
     }
   };
 
+// Functional Programming - creating variants from curried functions
 const fetchUsers = fetchFromGitHub(`${BASE_URL}/users`);
 
-export const getUsers = async (
-  searchQuery: UserSearchQueryParams,
-): Promise<GitHubResponse> => fetchUsers(createSearchQuery(searchQuery));
+// Functional Programming - composing multiple functions into desired behaviour
+export const getUsers = pipe(createSearchQuery, fetchUsers);

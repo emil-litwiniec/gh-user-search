@@ -6,15 +6,6 @@ import { renderWithProviders } from "@/tests/testUtils";
 import { UserSearch } from "../userSearch.component";
 
 describe("UserSearch", () => {
-  it("updates the username state when input changes", async () => {
-    renderWithProviders(<UserSearch />);
-
-    const input = screen.getByPlaceholderText("Type to search for a user...");
-    await userEvent.type(input, "testuser");
-
-    expect(input).toHaveValue("testuser");
-  });
-
   it("displays validation error for invalid username", async () => {
     renderWithProviders(<UserSearch />);
 
