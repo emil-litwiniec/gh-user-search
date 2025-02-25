@@ -4,7 +4,7 @@ import { GitHubAPIError } from "./errors";
 import { GitHubResponse, UserSearchQueryParams } from "./types";
 
 const BASE_URL = "https://api.github.com/search";
-const DEFAULT_ITEMS_PER_PAGE = 30;
+export const DEFAULT_ITEMS_PER_PAGE = 30;
 
 const handleFetchResponse = async (
   response: Response,

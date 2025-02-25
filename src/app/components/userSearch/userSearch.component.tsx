@@ -3,7 +3,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import * as yup from "yup";
 
-import { getUsers } from "@/app/api/queries";
+import { DEFAULT_ITEMS_PER_PAGE, getUsers } from "@/app/api/queries";
 
 import { ResultsList } from "../resultsList";
 import { SearchInput } from "../searchInput";
@@ -32,10 +32,14 @@ export const UserSearch = () => {
       return {
         items: users.items,
         totalCount: users.total_count,
-        nextPage: users.items.length === 30 ? pageParam + 1 : undefined,
+        nextPage:
+          users.items.length === DEFAULT_ITEMS_PER_PAGE
+            ? pageParam + 1
+            : undefined,
       };
     },
     getNextPageParam: (lastPage) => lastPage.nextPage,
+    enabled: !!username,
   });
 
   const items = data?.pages.flatMap((page) => page.items) ?? [];
