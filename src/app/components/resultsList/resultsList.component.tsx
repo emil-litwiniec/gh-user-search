@@ -1,5 +1,3 @@
-import React, { ReactNode, useEffect, useRef } from "react";
-import { useVirtualizer } from "@tanstack/react-virtual";
 import {
   Box,
   Card,
@@ -8,6 +6,8 @@ import {
   ListItem,
   Typography,
 } from "@mui/material";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import React, { ReactNode, useEffect, useRef } from "react";
 
 type ResultsListProps<T> = {
   items: T[];
@@ -16,6 +16,7 @@ type ResultsListProps<T> = {
   hasNextPage: boolean;
   isLoading: boolean;
   itemHeight?: number;
+  totalCount?: number;
 };
 
 export const ResultsList = <T,>({
@@ -25,6 +26,7 @@ export const ResultsList = <T,>({
   fetchNextPage,
   hasNextPage,
   isLoading = false,
+  totalCount,
 }: ResultsListProps<T>) => {
   const parentRef = useRef<HTMLDivElement | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
@@ -81,64 +83,80 @@ export const ResultsList = <T,>({
   }
 
   return (
-    <Card variant="outlined">
-      <Box
-        ref={parentRef}
-        sx={{
-          height: 500,
-          overflow: "auto",
-          scrollbarWidth: "none",
-          "&::-webkit-scrollbar": { display: "none" },
-        }}
-      >
-        <List
+    <Box>
+      <Card variant="outlined">
+        <Box
+          ref={parentRef}
           sx={{
-            position: "relative",
-            marginBlock: 2,
-            display: "flex",
-            flexDirection: "column",
-            gap: 10,
-          }}
-          style={{
-            height: `${rowVirtualizer.getTotalSize()}px`,
+            height: 500,
+            overflow: "auto",
+            scrollbarWidth: "none",
+            "&::-webkit-scrollbar": { display: "none" },
           }}
         >
-          {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-            const item = items[virtualRow.index];
-            return (
-              <ListItem
-                key={virtualRow.key}
-                style={{
-                  transform: `translateY(${virtualRow.start}px)`,
-                  height: `${virtualRow.size}px`,
-                }}
-                sx={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                }}
-              >
-                {renderItem(item)}
-              </ListItem>
-            );
-          })}
-        </List>
-
-        {hasNextPage && (
-          <Box
-            ref={loadMoreRef}
+          <List
             sx={{
+              position: "relative",
+              marginBlock: 2,
               display: "flex",
-              justifyContent: "center",
-              p: 2,
-              mb: 2,
+              flexDirection: "column",
+              gap: 10,
+            }}
+            style={{
+              height: `${rowVirtualizer.getTotalSize()}px`,
             }}
           >
-            <CircularProgress />
-          </Box>
-        )}
-      </Box>
-    </Card>
+            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+              const item = items[virtualRow.index];
+              return (
+                <ListItem
+                  key={virtualRow.key}
+                  style={{
+                    transform: `translateY(${virtualRow.start}px)`,
+                    height: `${virtualRow.size}px`,
+                  }}
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                  }}
+                >
+                  {renderItem(item)}
+                </ListItem>
+              );
+            })}
+          </List>
+
+          {hasNextPage && (
+            <Box
+              ref={loadMoreRef}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                p: 2,
+                mb: 2,
+              }}
+            >
+              <CircularProgress />
+            </Box>
+          )}
+        </Box>
+      </Card>
+      {totalCount && items.length && (
+        <Typography
+          component="span"
+          variant="caption"
+          sx={{
+            ml: "auto",
+            width: "max-content",
+            display: "block",
+            mt: 1,
+          }}
+        >
+          {items.length} / {totalCount}
+        </Typography>
+      )}
+    </Box>
   );
 };

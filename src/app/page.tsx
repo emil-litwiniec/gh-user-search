@@ -1,6 +1,7 @@
 "use client";
 
 import { Box, Container, Typography } from "@mui/material";
+
 import { UserSearch } from "./components";
 
 export default function Home() {

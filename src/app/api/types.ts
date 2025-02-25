@@ -1,10 +1,10 @@
-export type GHSearchResponse = {
+export type GitHubResponse = {
   total_count: number;
-  items: GHSearchItem[];
+  items: GitHubResponseItem[];
   incomplete_resuts: boolean;
 };
 
-export type GHSearchItem = {
+export type GitHubResponseItem = {
   login: string;
   id: number;
   node_id: string;
@@ -31,8 +31,4 @@ export type UserSearchQueryParams = {
   username: string;
   perPage?: number;
   page?: number;
-};
-
-export type GitHubResponse = {
-  items: GHSearchItem[];
 };

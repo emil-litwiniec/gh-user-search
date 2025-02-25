@@ -1,7 +1,8 @@
 import { GitHubAPIError } from "./errors";
-import { GHSearchItem, GitHubResponse, UserSearchQueryParams } from "./types";
+import { GitHubResponse, UserSearchQueryParams } from "./types";
 
 const BASE_URL = "https://api.github.com/search";
+const DEFAULT_ITEMS_PER_PAGE = 30;
 
 const handleFetchResponse = async (
   response: Response,
@@ -17,7 +18,7 @@ const handleFetchResponse = async (
 
 const createSearchQuery = ({
   username,
-  perPage = 30,
+  perPage = DEFAULT_ITEMS_PER_PAGE,
   page = 1,
 }: UserSearchQueryParams) => {
   const params = new URLSearchParams({
@@ -48,15 +49,17 @@ const fetchFromGitHub =
       return handleFetchResponse(response);
     } catch (error) {
       console.error("Failed to fetch users:", error);
-      return { items: [] };
+
+      return {
+        incomplete_resuts: false,
+        total_count: 0,
+        items: [],
+      };
     }
   };
 
 const fetchUsers = fetchFromGitHub(`${BASE_URL}/users`);
 
-const extractItems = (data: GitHubResponse): GHSearchItem[] => data.items;
-
 export const getUsers = async (
   searchQuery: UserSearchQueryParams,
-): Promise<GHSearchItem[]> =>
-  fetchUsers(createSearchQuery(searchQuery)).then(extractItems);
+): Promise<GitHubResponse> => fetchUsers(createSearchQuery(searchQuery));

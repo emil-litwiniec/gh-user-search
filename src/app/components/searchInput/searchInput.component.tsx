@@ -1,8 +1,9 @@
+import { yupResolver } from "@hookform/resolvers/yup";
+import { TextField } from "@mui/material";
 import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { TextField } from "@mui/material";
-import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+
 import { useDebounce } from "@/app/hooks";
 
 type SearchFormProps = {

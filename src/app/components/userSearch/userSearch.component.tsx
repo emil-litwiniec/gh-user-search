@@ -1,15 +1,17 @@
-import { getUsers } from "@/app/api/queries";
 import { Avatar, Box, Card, CardContent, Typography } from "@mui/material";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import Link from "next/link";
-import { GHSearchItem } from "@/app/api/types";
-import { ResultsList } from "../resultsList";
-import { SearchInput } from "../searchInput";
+import { useState } from "react";
 import * as yup from "yup";
 
+import { getUsers } from "@/app/api/queries";
+import { GitHubResponseItem } from "@/app/api/types";
+
+import { ResultsList } from "../resultsList";
+import { SearchInput } from "../searchInput";
+
 type UserItemProps = {
-  item: GHSearchItem;
+  item: GitHubResponseItem;
 };
 
 const MAX_GITHUB_USERNAME_LENGTH = 39;
@@ -69,14 +71,16 @@ export const UserSearch = () => {
       });
 
       return {
-        items: users,
-        nextPage: users.length === 30 ? pageParam + 1 : undefined,
+        items: users.items,
+        totalCount: users.total_count,
+        nextPage: users.items.length === 30 ? pageParam + 1 : undefined,
       };
     },
     getNextPageParam: (lastPage) => lastPage.nextPage,
   });
 
   const items = data?.pages.flatMap((page) => page.items) ?? [];
+  const totalCount = data?.pages[0].totalCount;
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -94,6 +98,7 @@ export const UserSearch = () => {
           fetchNextPage={fetchNextPage}
           hasNextPage={hasNextPage}
           isLoading={isLoading}
+          totalCount={totalCount}
         />
       )}
     </Box>
